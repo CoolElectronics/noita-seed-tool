@@ -16,7 +16,20 @@ const saves = path.join(
 );
 const noitaexe =
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Noita\\noita.exe";
-
+function opennoita() {
+  console.log("opening noita " + noitaexe);
+  child = spawn("powershell.exe", [__dirname + "\\noita.ps1"]);
+  child.stdout.on("data", function (data) {
+    console.log("Powershell Data: " + data);
+  });
+  child.stderr.on("data", function (data) {
+    console.log("Powershell Errors: " + data);
+  });
+  child.on("exit", function () {
+    console.log("Powershell Script finished");
+  });
+  child.stdin.end();
+}
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -35,23 +48,23 @@ function createWindow() {
   setInterval(GetSeed, 1000);
   ipc.on("makesave", () => {
     console.log("making save");
+    exec("NoiClose.exe");
+    setTimeout(() => {
+      exec("save.bat");
+
+      opennoita();
+    }, 5000);
   });
   ipc.on("loadsave", () => {
     console.log("loading save");
+    exec("NoiClose.exe");
+    setTimeout(() => {
+      exec("load.bat");
+      opennoita();
+    }, 5000);
   });
   ipc.on("opennoita", () => {
-    console.log("opening noita " + noitaexe);
-    child = spawn("powershell.exe", [__dirname + "\\noita.ps1"]);
-    child.stdout.on("data", function (data) {
-      console.log("Powershell Data: " + data);
-    });
-    child.stderr.on("data", function (data) {
-      console.log("Powershell Errors: " + data);
-    });
-    child.on("exit", function () {
-      console.log("Powershell Script finished");
-    });
-    child.stdin.end();
+    opennoita();
   });
   ipc.on("opensaves", () => {
     console.log("open save");
