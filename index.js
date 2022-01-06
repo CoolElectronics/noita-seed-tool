@@ -27,7 +27,7 @@ app = new Vue({
       startingFlask: null,
       startingBombWand: null,
       perks: null,
-      fungalShifts: null
+      fungalShifts: null,
     },
 
     displayPerkDeck: false,
@@ -36,9 +36,52 @@ app = new Vue({
     perkRerolls: [],
     perkWorldOffset: 0,
     fungalHoldingFlaskAll: false,
-    fungalHoldingFlasks: new Array(20).fill(false)
+    fungalHoldingFlasks: new Array(20).fill(false),
   },
   methods: {
+    seeed(val, oldVal) {
+      this.perkWorldOffset = 0;
+      this.pickedPerks = [];
+      this.perkRerolls = [];
+      //this.fungalHoldingFlaskAll = false;
+      let url = new URL(document.URL);
+      if (this.seed) url.searchParams.set("seed", this.seed);
+      else url.searchParams.delete("seed");
+      if (url.search) history.replaceState(null, null, url.search);
+      else history.replaceState(null, null, url.pathname);
+      if (this.seed == 666)
+        document.querySelector("link[rel='shortcut icon']").href =
+          "favicon666.png";
+      else if (oldVal == 666)
+        document.querySelector("link[rel='shortcut icon']").href =
+          "favicon.png";
+
+      if (!this.seed) {
+        this.seedInfo = {
+          rainType: [false],
+        };
+      }
+      SetWorldSeed(Number(this.seed));
+      this.seedInfo = {
+        rainType: infoProviders.RAIN.provide(),
+        startingFlask: infoProviders.STARTING_FLASK.provide(),
+        startingSpell: infoProviders.STARTING_SPELL.provide(),
+        startingBombSpell: infoProviders.STARTING_BOMB_SPELL.provide(),
+        perks: infoProviders.PERK.provide(
+          this.pickedPerks,
+          null,
+          true,
+          this.perkWorldOffset,
+          this.perkRerolls
+        ),
+        perkDeck: infoProviders.PERK.getPerkDeck(true),
+        fungalShifts: infoProviders.FUNGAL_SHIFT.provide(
+          null,
+          this.fungalHoldingFlasks
+        ),
+        biomeModifiers: infoProviders.BIOME_MODIFIER.provide(),
+      };
+    },
     searchSeed() {
       if (this.seed == 0) this.seed++;
       this.seedSearchCounts = [];
@@ -50,13 +93,14 @@ app = new Vue({
       this.searchingSeed = true;
     },
     cancelSeedSearch() {
-      for (let i = 0; i < workers.length; i++)
-        workers[i].terminate();
+      for (let i = 0; i < workers.length; i++) workers[i].terminate();
       this.workers = [];
       this.searchingSeed = false;
     },
     serializeSeedCriteria() {
-      return this.seedCriteria.map(e => (e.not ? "!" : "") + e.serialize() + (e.or ? ";" : "")).join()
+      return this.seedCriteria
+        .map((e) => (e.not ? "!" : "") + e.serialize() + (e.or ? ";" : ""))
+        .join();
     },
     copySeedSearchLink() {
       let url = new URL(document.URL);
@@ -77,7 +121,7 @@ app = new Vue({
       this.showSeedCriteria = !this.showSeedCriteria;
     },
     addCriteria() {
-      this.seedCriteria.push(new this.availableRequirements[0]())
+      this.seedCriteria.push(new this.availableRequirements[0]());
     },
     changeCriteriaType(index, i) {
       this.$set(this.seedCriteria, index, new this.availableRequirements[i]());
@@ -124,16 +168,29 @@ app = new Vue({
     },
     perksGoEast() {
       this.perkWorldOffset++;
-      this.seedInfo.perks = infoProviders.PERK.provide(this.pickedPerks, null, true, this.perkWorldOffset, this.perkRerolls);
+      this.seedInfo.perks = infoProviders.PERK.provide(
+        this.pickedPerks,
+        null,
+        true,
+        this.perkWorldOffset,
+        this.perkRerolls
+      );
     },
     perksGoWest() {
       this.perkWorldOffset--;
-      this.seedInfo.perks = infoProviders.PERK.provide(this.pickedPerks, null, true, this.perkWorldOffset, this.perkRerolls);
+      this.seedInfo.perks = infoProviders.PERK.provide(
+        this.pickedPerks,
+        null,
+        true,
+        this.perkWorldOffset,
+        this.perkRerolls
+      );
     },
     onClickPerk(level, perk) {
       if (perk.gambled) return;
       let perkId = perk.id;
-      if (!this.pickedPerks[this.perkWorldOffset]) this.pickedPerks[this.perkWorldOffset] = [];
+      if (!this.pickedPerks[this.perkWorldOffset])
+        this.pickedPerks[this.perkWorldOffset] = [];
       if (this.pickedPerks[this.perkWorldOffset][level] === perkId) {
         delete this.pickedPerks[this.perkWorldOffset][level];
       } else {
@@ -143,9 +200,24 @@ app = new Vue({
       let changed;
       do {
         changed = false;
-        this.seedInfo.perks = infoProviders.PERK.provide(this.pickedPerks, null, true, this.perkWorldOffset, this.perkRerolls);
-        for (let i = 0; i < this.pickedPerks[this.perkWorldOffset].length; i++) {
-          if (this.pickedPerks[this.perkWorldOffset][i] && !this.seedInfo.perks[i].some(e => e.id === this.pickedPerks[this.perkWorldOffset][i])) {
+        this.seedInfo.perks = infoProviders.PERK.provide(
+          this.pickedPerks,
+          null,
+          true,
+          this.perkWorldOffset,
+          this.perkRerolls
+        );
+        for (
+          let i = 0;
+          i < this.pickedPerks[this.perkWorldOffset].length;
+          i++
+        ) {
+          if (
+            this.pickedPerks[this.perkWorldOffset][i] &&
+            !this.seedInfo.perks[i].some(
+              (e) => e.id === this.pickedPerks[this.perkWorldOffset][i]
+            )
+          ) {
             delete this.pickedPerks[this.perkWorldOffset][i];
             changed = true;
             break;
@@ -154,23 +226,47 @@ app = new Vue({
       } while (changed);
     },
     increasePerkRerolls(level) {
-      if (!this.perkRerolls[this.perkWorldOffset]) this.$set(this.perkRerolls, this.perkWorldOffset, []);
-      if (isNaN(this.perkRerolls[this.perkWorldOffset][level])) this.perkRerolls[this.perkWorldOffset][level] = 0;
-      this.$set(this.perkRerolls[this.perkWorldOffset], level, this.perkRerolls[this.perkWorldOffset][level] + 1);
-      this.seedInfo.perks = infoProviders.PERK.provide(this.pickedPerks, null, true, this.perkWorldOffset, this.perkRerolls);
+      if (!this.perkRerolls[this.perkWorldOffset])
+        this.$set(this.perkRerolls, this.perkWorldOffset, []);
+      if (isNaN(this.perkRerolls[this.perkWorldOffset][level]))
+        this.perkRerolls[this.perkWorldOffset][level] = 0;
+      this.$set(
+        this.perkRerolls[this.perkWorldOffset],
+        level,
+        this.perkRerolls[this.perkWorldOffset][level] + 1
+      );
+      this.seedInfo.perks = infoProviders.PERK.provide(
+        this.pickedPerks,
+        null,
+        true,
+        this.perkWorldOffset,
+        this.perkRerolls
+      );
     },
     decreasePerkRerolls(level) {
-      if (!this.perkRerolls[this.perkWorldOffset]) this.$set(this.perkRerolls, this.perkWorldOffset, []);
-      if (isNaN(this.perkRerolls[this.perkWorldOffset][level])) this.perkRerolls[this.perkWorldOffset][level] = 0;
-      this.$set(this.perkRerolls[this.perkWorldOffset], level, Math.max(0, this.perkRerolls[this.perkWorldOffset][level] - 1));
-      this.seedInfo.perks = infoProviders.PERK.provide(this.pickedPerks, null, true, this.perkWorldOffset, this.perkRerolls);
+      if (!this.perkRerolls[this.perkWorldOffset])
+        this.$set(this.perkRerolls, this.perkWorldOffset, []);
+      if (isNaN(this.perkRerolls[this.perkWorldOffset][level]))
+        this.perkRerolls[this.perkWorldOffset][level] = 0;
+      this.$set(
+        this.perkRerolls[this.perkWorldOffset],
+        level,
+        Math.max(0, this.perkRerolls[this.perkWorldOffset][level] - 1)
+      );
+      this.seedInfo.perks = infoProviders.PERK.provide(
+        this.pickedPerks,
+        null,
+        true,
+        this.perkWorldOffset,
+        this.perkRerolls
+      );
     },
     copyString(str) {
-      let txtCopy = document.createElement('input');
+      let txtCopy = document.createElement("input");
       txtCopy.value = str;
       document.body.appendChild(txtCopy);
       txtCopy.select();
-      document.execCommand('copy');
+      document.execCommand("copy");
       document.body.removeChild(txtCopy);
     },
     parseURL() {
@@ -179,7 +275,7 @@ app = new Vue({
       }
       let url = new URL(document.URL);
       let seed;
-      if (seed = url.searchParams.get("seed")) {
+      if ((seed = url.searchParams.get("seed"))) {
         this.seed = seed;
       }
     },
@@ -190,84 +286,69 @@ app = new Vue({
       for (let i = 0; i < numCores; i++) {
         let worker = new Worker("worker.js");
         workers.push(worker);
-        worker.addEventListener('message', e => {
+        worker.addEventListener("message", (e) => {
           let [id, type, value] = e.data;
-          if (type === 0) { // progress report
+          if (type === 0) {
+            // progress report
             this.$set(this.seedSearchCounts, id, value);
-          } else { // found seed
+          } else {
+            // found seed
             this.seed = value;
             //this.searchingSeed = false;
             this.cancelSeedSearch();
           }
         });
       }
-    }
+    },
   },
   watch: {
     seed(val, oldVal) {
-      this.perkWorldOffset = 0;
-      this.pickedPerks = [];
-      this.perkRerolls = [];
-      //this.fungalHoldingFlaskAll = false;
-      let url = new URL(document.URL);
-      if (this.seed)
-        url.searchParams.set("seed", this.seed);
-      else
-        url.searchParams.delete("seed");
-      if (url.search)
-        history.replaceState(null, null, url.search);
-      else
-        history.replaceState(null, null, url.pathname);
-      if (this.seed == 666) document.querySelector("link[rel='shortcut icon']").href = "favicon666.png";
-      else if (oldVal == 666) document.querySelector("link[rel='shortcut icon']").href = "favicon.png";
-
-      if (!this.seed) {
-        this.seedInfo = {
-          rainType: [false]
-        };
-      }
-      SetWorldSeed(Number(this.seed));
-      this.seedInfo = {
-        rainType: infoProviders.RAIN.provide(),
-        startingFlask: infoProviders.STARTING_FLASK.provide(),
-        startingSpell: infoProviders.STARTING_SPELL.provide(),
-        startingBombSpell: infoProviders.STARTING_BOMB_SPELL.provide(),
-        perks: infoProviders.PERK.provide(this.pickedPerks, null, true, this.perkWorldOffset, this.perkRerolls),
-        perkDeck: infoProviders.PERK.getPerkDeck(true),
-        fungalShifts: infoProviders.FUNGAL_SHIFT.provide(null, this.fungalHoldingFlasks),
-        biomeModifiers: infoProviders.BIOME_MODIFIER.provide()
-      };
+      this.seeed(val, oldVal);
     },
     fungalHoldingFlaskAll() {
       this.fungalHoldingFlasks = new Array(20).fill(this.fungalHoldingFlaskAll);
     },
     fungalHoldingFlasks() {
-      this.seedInfo.fungalShifts = infoProviders.FUNGAL_SHIFT.provide(null, this.fungalHoldingFlasks);
-    }
+      this.seedInfo.fungalShifts = infoProviders.FUNGAL_SHIFT.provide(
+        null,
+        this.fungalHoldingFlasks
+      );
+    },
   },
   computed: {
     perkWorldOffsetText() {
-      if (this.perkWorldOffset == 0) return 'main world';
-      if (this.perkWorldOffset < 0) return 'west ' + Math.abs(this.perkWorldOffset);
-      return 'east ' + this.perkWorldOffset;
+      if (this.perkWorldOffset == 0) return "main world";
+      if (this.perkWorldOffset < 0)
+        return "west " + Math.abs(this.perkWorldOffset);
+      return "east " + this.perkWorldOffset;
     },
     seedCriteriaText() {
       let str = "\n";
       for (let i = 0; i < this.seedCriteria.length; i++) {
         let criteria = this.seedCriteria[i];
-        str += "- " + (criteria.not ? "DON'T " : "") + criteria.textify() + (criteria.or ? " OR:" : "") + "\n";
+        str +=
+          "- " +
+          (criteria.not ? "DON'T " : "") +
+          criteria.textify() +
+          (criteria.or ? " OR:" : "") +
+          "\n";
       }
       return str;
     },
     seedSearchCountStr() {
-      return this.seedSearchCounts.reduce((acc, val) => acc + val, 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return this.seedSearchCounts
+        .reduce((acc, val) => acc + val, 0)
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
     sortedPerks() {
-      return infoProviders.PERK.perks.slice(0).sort((a, b) => a.ui_name.localeCompare(b.ui_name))
-    }
+      return infoProviders.PERK.perks
+        .slice(0)
+        .sort((a, b) => a.ui_name.localeCompare(b.ui_name));
+    },
   },
   async created() {
     await Promise.all(loadingInfoProviders);
     this.parseURL();
-  }
+  },
 });

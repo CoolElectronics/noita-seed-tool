@@ -1,46 +1,64 @@
 .fungal-shift:nth-child(even) {
-  background-color: hsla(var(--b2)/var(--tw-bg-opacity,1));
+  background-color: hsla(var(--b2) / var(--tw-bg-opacity, 1));
 }
 .perk > img {
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
 }
 .perk-active {
-  background-color: hsla(var(--a)/var(--tw-bg-opacity,1));
+  background-color: hsla(var(--a) / var(--tw-bg-opacity, 1));
 }
 .perk-gambled {
-  background-color: hsla(var(--wa)/var(--tw-bg-opacity,1));
+  background-color: hsla(var(--wa) / var(--tw-bg-opacity, 1));
   cursor: default;
 }
 .perk-reroll {
-  background: url('img/perk_reroll.png') center -17px/contain no-repeat;
+  background: url("img/perk_reroll.png") center -17px / contain no-repeat;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   user-select: none;
-}
-.biome-modifier {
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-}
-.biome-modifier:nth-child(even) {
-  background-color: hsla(var(--b2)/var(--tw-bg-opacity,1));
 }
 .lbl-holding-flask {
   padding-top: 0;
   padding-bottom: 0;
 }
-@media (max-width: 768px) {
+.stat-value {
+  font-size: 20px;
+}
+.scuffed-idiot-hacks {
+  position: absolute;
+}
+.cssbutton {
+  background-color: crimson;
+  border: 10px solid crimson;
+  border-radius: 1.5em;
+  top: 30px;
+}
+#savescumtitle {
+  text-align: center;
+  left: 50%;
+  transform: translate(-50%, 0%);
+}
+#savescumcontainer {
+  background-color: hsla(var(--b2) / var(--tw-bg-opacity, 1));
+  margin: 10px;
+  padding: auto;
+  width: 405px;
+  height: 80px;
+  left: 300px;
+  top: 0px;
+}
+#loadbutton {
+  left: 100px;
+}
+#opensaves {
+  left: 195px;
+}
+#opennoita {
+  left: 320px;
+}
+@media (max-width: 108px) {
   .seed-criteria {
     display: block;
-  }
-  td.seed-critera-left {
-    padding-right: 0.25rem;
-  }
-  td.seed-critera-middle {
-    padding-right: 0.25rem;
-    padding-left: 0.25rem;
-  }
-  td.seed-critera-right {
-    padding-left: 0.25rem;
   }
 }
