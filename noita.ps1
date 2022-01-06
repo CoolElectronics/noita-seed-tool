@@ -13,5 +13,5 @@ if(Test-Path $gamepath\noita.exe) {
 	$gamepath = $gogpath
 }
 Push-Location $gamepath
-Invoke-Expression "& `".\noita.exe`" -magic_numbers magic.txt -no_logo_splashes"
+Invoke-Expression "& `".\noita.exe`" -no_logo_splashes"
 Pop-Location
