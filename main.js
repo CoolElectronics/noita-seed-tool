@@ -45,7 +45,7 @@ function createWindow() {
 
   // and load the index.html of the app.
   mainWindow.loadFile("index.html");
-  setInterval(GetSeed, 1000);
+  setInterval(GetSeed, 5000);
   ipc.on("makesave", () => {
     console.log("making save");
     exec("NoiClose.exe");

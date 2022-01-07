@@ -48,6 +48,39 @@
   left: 300px;
   top: 0px;
 }
+#alchemycontainer {
+  visibility: hidden;
+  background-color: hsla(var(--b2) / var(--tw-bg-opacity, 1));
+  margin: 10px;
+  padding: auto;
+  width: 320px;
+  height: 107px;
+  left: 590px;
+  top: 450px;
+}
+#lc {
+  position: relative;
+  background-color: teal;
+  width: 152px;
+  left: 5px;
+  top: 5px;
+}
+#ap {
+  position: relative;
+  background-color: teal;
+  width: 152px;
+  left: 162px;
+  bottom: 91px;
+}
+.alch-comp {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+}
+.centered {
+  text-align: center;
+  right: 50%;
+}
 #loadbutton {
   left: 100px;
 }

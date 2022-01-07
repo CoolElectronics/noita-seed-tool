@@ -10,6 +10,7 @@
   <link href="https://cdn.jsdelivr.net/npm/daisyui@1.14.0/dist/full.css" rel="stylesheet" type="text/css" />
   <link href="index.css" rel="stylesheet" type="text/css" />
   <script src="lib/noita_random.js"></script>
+  <script src="alcalc.js"></script>
   <script src="scripts/random.js"></script>
   <script src="requirements.js"></script>
   <link rel="shortcut icon" href="favicon.png" type="image/png">
@@ -51,11 +52,29 @@
           <button class="scuffed-idiot-hacks cssbutton" id="opennoita" onclick="window.postMessage('opennoita')">Noita.exe</button>
           <button class="scuffed-idiot-hacks cssbutton" id="opensaves" onclick="window.postMessage('opensaves')">Save Locations</button>
         </div>
+        
         <!-- <label class="label">
           <a href="javascript:void(0)" class="label-text-alt" @click="generateSeed">Random Seed</a>
         </label> -->
       </div>
-      
+      <div class="scuffed-idiot-hacks" id="alchemycontainer">
+        <div id="lc">
+          <p class="centered">LC:</p>
+
+          <p class="alch-comp centered" id = "lc1"></p>
+          <p class="alch-comp centered" id = "lc2"></p>
+          <p class="alch-comp centered" id = "lc3"></p>
+
+        </div>
+        <div id="ap">
+          <p class="centered">AP:</p>
+          <p class="alch-comp centered" id = "ap1"></p>
+          <p class="alch-comp centered" id = "ap2"></p>
+          <p class="alch-comp centered" id = "ap3"></p>
+        </div>
+        
+
+      </div>
       <div class="flex md:flex-row flex-col pt-5" v-if="seed > 0">
         <div class="flex flex-col inline-flex md:w-72"> <div class="p-4">
             <div class="w-full flex flex-row justify-between">

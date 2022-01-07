@@ -62,6 +62,21 @@ app = new Vue({
         };
       }
       SetWorldSeed(Number(this.seed));
+      var alchemy = MaterialPicker.PickForSeed(this.seed);
+      if (this.seed != 0) {
+        document.getElementById("alchemycontainer").style.visibility =
+          "visible";
+        document.getElementById("lc1").innerText = alchemy.LC[0];
+        document.getElementById("lc2").innerText = alchemy.LC[1];
+        document.getElementById("lc3").innerText = alchemy.LC[2];
+
+        document.getElementById("ap1").innerText = alchemy.AP[0];
+        document.getElementById("ap2").innerText = alchemy.AP[1];
+        document.getElementById("ap3").innerText = alchemy.AP[2];
+      } else {
+        document.getElementById("alchemycontainer").style.visibility = "hidden";
+      }
+
       this.seedInfo = {
         rainType: infoProviders.RAIN.provide(),
         startingFlask: infoProviders.STARTING_FLASK.provide(),
