@@ -1,81 +1,63 @@
-.fungal-shift:nth-child(even) {
-  background-color: hsla(var(--b2) / var(--tw-bg-opacity, 1));
+body, html
+{
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
 }
-.perk > img {
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-}
-.perk-active {
-  background-color: hsla(var(--a) / var(--tw-bg-opacity, 1));
-}
-.perk-gambled {
-  background-color: hsla(var(--wa) / var(--tw-bg-opacity, 1));
-  cursor: default;
-}
-.perk-reroll {
-  background: url("img/perk_reroll.png") center -17px / contain no-repeat;
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  user-select: none;
-}
-.lbl-holding-flask {
-  padding-top: 0;
-  padding-bottom: 0;
-}
-.stat-value {
-  font-size: 20px;
-}
-.scuffed-idiot-hacks {
+
+#content
+{
   position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0px;
 }
-.cssbutton {
-  background-color: crimson;
-  border: 10px solid crimson;
-  border-radius: 1.5em;
-  top: 30px;
-}
-#savescumtitle {
-  text-align: center;
-  left: 50%;
-  transform: translate(-50%, 0%);
-}
+
 #savescumcontainer {
+  z-index: 1;
+  position: fixed;
+  text-align: center;
   background-color: hsla(var(--b2) / var(--tw-bg-opacity, 1));
   margin: 10px;
   padding: auto;
   width: 405px;
   height: 80px;
-  left: 300px;
-  top: 0px;
+  right: 100px;
+  top: 20px;
+}
+#savescumcontainer .buttons {
+  display: flex;
+}
+#savescumcontainer button {
+  background-color: crimson;
+  border: 10px solid crimson;
+  border-radius: 1.5em;
 }
 #alchemycontainer {
+  display: flex;
+  z-index: 1;
   visibility: hidden;
+  position: fixed;
   background-color: hsla(var(--b2) / var(--tw-bg-opacity, 1));
   margin: 10px;
   padding: auto;
   width: 320px;
-  height: 107px;
-  left: 590px;
-  top: 450px;
+  right: 50px;
+  bottom: 50px;
 }
-#lc {
-  position: relative;
+#alchemycontainer div {
+  width: 50%;
   background-color: teal;
-  width: 152px;
-  left: 5px;
-  top: 5px;
+  margin: 3px;
 }
-#ap {
-  position: relative;
-  background-color: teal;
-  width: 152px;
-  left: 162px;
-  bottom: 91px;
-}
+
 .alch-comp {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: clip;
+  text-transform: capitalize;
 }
 .centered {
   text-align: center;
@@ -89,9 +71,4 @@
 }
 #opennoita {
   left: 320px;
-}
-@media (max-width: 108px) {
-  .seed-criteria {
-    display: block;
-  }
 }

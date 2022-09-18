@@ -100,13 +100,10 @@ function GetSeed() {
       console.log(`stderr: ${stderr}`);
       return;
     }
-    mainWindow.webContents.executeJavaScript("app.seed = " + stdout);
-    // mainWindow.webContents.executeJavaScript(
-    //   "document.getElementById('SeedInput').value = " + stdout
-    // );
-    // mainWindow.webContents.executeJavaScript(
-    //   "app.seeed(" + stdout + "," + stdout + ")"
-    // );
+
+    mainWindow.webContents.executeJavaScript(
+      "SetSeed(" + parseInt(stdout) + ")"
+    );
   });
 }
 
